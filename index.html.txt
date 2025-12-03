@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ならバド年末年始交流会 申込フォーム</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        line-height: 1.6;
+        background-color: #f9f9f9;
+      }
+      h2 {
+        color: #2c3e50;
+        text-align: center;
+      }
+      form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        margin: auto;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      input, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .checkbox-group {
+        margin-top: 5px;
+      }
+      .checkbox-group label {
+        font-weight: normal;
+        display: block;
+      }
+      button {
+        margin-top: 20px;
+        padding: 10px;
+        width: 100%;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #2980b9;
+      }
+      #result {
+        margin-top: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>ならバド年末年始バドミントン交流会 申込フォーム</h2>
+    <form id="entryForm">
+      <label>名前:
+        <input type="text" name="name" required>
+      </label>
+
+      <label>連絡先 (メール/LINE):
+        <input type="text" name="contact" required>
+      </label>
+
+      <label>参加希望日（複数選択可）:</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="dates" value="12/30①"> 12/30 12:30～14:30</label>
+        <label><input type="checkbox" name="dates" value="12/30②"> 12/30 15:00～17:00</label>
+        <label><input type="checkbox" name="dates" value="12/31①"> 12/31 8:00～10:00</label>
+        <label><input type="checkbox" name="dates" value="12/31②"> 12/31 10:30～12:30</label>
+        <label><input type="checkbox" name="dates" value="1/1①"> 1/1 11:00～13:00</label>
+        <label><input type="checkbox" name="dates" value="1/1②"> 1/1 13:30～15:30</label>
+        <label><input type="checkbox" name="dates" value="1/2①"> 1/2 9:00～11:00</label>
+        <label><input type="checkbox" name="dates" value="1/2②"> 1/2 11:30～13:30</label>
+      </div>
+
+      <label>区分:
+        <select name="level" required>
+          <option value="①小学生～中学全市レベル">① 小学生～中学全市レベル</option>
+          <option value="②中学生全市16レベル以上～社会人">② 中学生全市16レベル以上～社会人</option>
+        </select>
+      </label>
+
+      <label>ペア希望:
+        <input type="text" name="pair" placeholder="固定ペア名 or ランダム">
+      </label>
+
+      <button type="submit">送信</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+      const form = document.getElementById("entryForm");
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const selectedDates = Array.from(form.querySelectorAll("input[name='dates']:checked"))
+                                   .map(cb => cb.value)
+                                   .join(", ");
+        const data = {
+          name: form.name.value,
+          contact: form.contact.value,
+          date: selectedDates,
+          level: form.level.value,
+          pair: form.pair.value
+        };
+        google.script.run
+          .withSuccessHandler(function(response) {
+            document.getElementById("result").innerText = response.message;
+            form.reset();
+          })
+          .withFailureHandler(function(error) {
+            document.getElementById("result").innerText = "エラー: " + error.message;
+          })
+          .submitForm(data);
+      });
+    </script>
+  </body>
+</html>
